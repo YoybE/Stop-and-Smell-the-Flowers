@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms;
@@ -8,14 +9,16 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
 
     // Player Movement variables
-    public float speed = 10;
-    public float maxSpeed = 20;
+    public float walkSpeed = 5f;
+    public float maxWalkSpeed = 10f;
+    public float runSpeed = 10f;
+    public float maxRunSpeed = 20f;
+    public float jumpSpeed = 5f;
 
     private float moveHorizontal;
     private bool isJumping;
-
-    // KeyMapping
-    public KeyCode[] Jump = { KeyCode.Space, KeyCode.Joystick1Button0 };
+    private bool isRunning;
+    private bool onGroundState;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,11 +35,21 @@ public class PlayerMovement : MonoBehaviour
     {
         moveHorizontal = Input.GetAxisRaw("Horizontal"); // Returns a value based on key press A/Left = -1, D/Right = 1 
 
-        for (int i = 0; i < Jump.Length; i++)
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button0))
         {
-            // TODO: Fix Issue where bool does not update with first array element
-            isJumping = Input.GetKeyDown(Jump[i]);
+            isJumping = true;
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Debug.Log("Running");
+            isRunning = true;
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground")) { onGroundState = true; }
     }
 
     // FixedUpdate is called 50 times per second
@@ -46,20 +59,31 @@ public class PlayerMovement : MonoBehaviour
         if (Mathf.Abs(moveHorizontal) > 0)
         {
             Vector2 movement = new Vector2(moveHorizontal, 0);
+            float currMaxSpeed = (isRunning) ? maxRunSpeed : maxWalkSpeed;
+            float currSpeed = (isRunning) ? runSpeed : walkSpeed;
 
             // Ensures that there is no additional acceleration past the maximum speed limit
-            if (rb.linearVelocity.magnitude < maxSpeed)
+            if (rb.linearVelocity.magnitude < currMaxSpeed)
             {
-                rb.AddForce(movement * speed); // Kept as ForceMode.Force (mass & time dependent) 
-                Debug.Log(moveHorizontal);
+                rb.AddForce(movement * currSpeed);
             }
+
+            Debug.Log(rb.linearVelocityX);
         }
 
-        if (isJumping)
+        if (Input.GetKeyUp("a") || Input.GetKeyUp("d"))
         {
-            Debug.Log("Is Jumping");
-            Vector2 movement = new Vector2(0, 1);
-            rb.AddForce(movement * speed, ForceMode2D.Impulse); // ForceMode.Impulse (mass dependent, time independent) 
+            rb.linearVelocityX = 0;
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift)) { isRunning = false; }
+
+        if (isJumping && onGroundState)
+        {
+            rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); // ForceMode.Impulse (mass dependent, time independent) 
+
+            isJumping = false;
+            onGroundState = false;
         }
     }
 }
