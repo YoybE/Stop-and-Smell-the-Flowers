@@ -9,11 +9,11 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
 
     // Player Movement variables
-    public float walkSpeed = 5f;
-    public float maxWalkSpeed = 10f;
-    public float runSpeed = 10f;
-    public float maxRunSpeed = 20f;
-    public float jumpSpeed = 5f;
+    public float walkSpeed = 8;
+    public float maxWalkSpeed = 8;
+    public float runSpeed = 10;
+    public float maxRunSpeed = 12;
+    public float jumpSpeed = 5;
 
     private float moveHorizontal;
     private bool isJumping;
@@ -53,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // FixedUpdate is called 50 times per second
-    // Recommended loop for applied forces & physics
+    // Recommended loop for applied forces & physics (Runs on Unity Physics timestep)
     void FixedUpdate()
     {
         if (Mathf.Abs(moveHorizontal) > 0)
@@ -73,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyUp("a") || Input.GetKeyUp("d"))
         {
-            rb.linearVelocityX = 0;
+            rb.linearVelocityX = 0.1f;
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift)) { isRunning = false; }
@@ -81,6 +81,7 @@ public class PlayerMovement : MonoBehaviour
         if (isJumping && onGroundState)
         {
             rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); // ForceMode.Impulse (mass dependent, time independent) 
+            rb.linearVelocityX = moveHorizontal * 0.2f;
 
             isJumping = false;
             onGroundState = false;
