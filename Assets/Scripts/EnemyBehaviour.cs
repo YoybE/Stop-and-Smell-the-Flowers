@@ -1,9 +1,11 @@
+using System;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
     private Rigidbody2D rb;
+    [NonSerialized] public Vector3 startPosition;
 
     // Movement/Patrol Variables
     public float patrolSpeed = 2;
@@ -15,13 +17,14 @@ public class EnemyBehaviour : MonoBehaviour
 
     // Enemy Attributes
     private Color enemyColor;
-    [SerializeField] private int hp = 10;
+    public int hp = 1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         enemyColor = GetComponent<SpriteRenderer>().color;
+        startPosition = GetComponent<Transform>().position;
 
         originalX = transform.position.x;
         ComputeVelocity();
@@ -40,11 +43,11 @@ public class EnemyBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (hp == 0) { gameObject.SetActive(false); }
     }
 
     // FixedUpdate is called 50 times per second
-    // Recommended loop for applied forces & physics
+    // Recommended loop for applied forces & physics (Runs on Unity Physics timestep)
     void FixedUpdate()
     {
         if (Mathf.Abs(rb.position.x - originalX) < maxOffset) { move(); }
@@ -55,5 +58,10 @@ public class EnemyBehaviour : MonoBehaviour
             ComputeVelocity();
             move();
         }
+    }
+
+    public void takeDamage(int damage)
+    {
+        hp -= damage;
     }
 }
