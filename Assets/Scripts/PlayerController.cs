@@ -5,8 +5,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
+using System.Collections;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D rb;
     private SpriteRenderer sr;
@@ -14,26 +15,19 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 originalPos;
 
     // Player Movement variables
-    public float walkSpeed = 8.1f;
-    public float maxWalkSpeed = 8.2f;
-    public float runSpeed = 9.0f;
-    public float maxRunSpeed = 12;
-    public float jumpSpeed = 10;
+    public float walkSpeed = 12.7f;
+    public float maxWalkSpeed = 13.0f;
+    public float runSpeed = 13.5f;
+    public float maxRunSpeed = 15.0f;
+    public float jumpSpeed = 11.0f;
 
     private float moveHorizontal;
     private bool isJumping;
     private bool isRunning;
     private bool onGroundState;
 
-    [SerializeField] private int score;
     public GameObject enemies;
 
-    // UI
-    public TextMeshProUGUI scoreText;
-    public GameObject gameOverScreen;
-    public GameObject otherUI;
-    // private Vector3 restartOriginalPos = new Vector3(524.5f, 281.0f, 0.0f);
-    // public Vector3 restartFinalPos = new Vector3(0.0f, -20.0f, 0.0f);
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,15 +43,16 @@ public class PlayerMovement : MonoBehaviour
     // Game Logic Implementation
     void Update()
     {
-        moveHorizontal = Input.GetAxisRaw("Horizontal"); // Returns a value based on key press A/Left = -1, D/Right = 1 
+        moveHorizontal = Input.GetAxisRaw("Horizontal"); // Returns a value x, R[-1,1], based on input A/Left = -1, D/Right = 1 
+        // Debug.Log(moveHorizontal);
 
         #region Flip Player Sprite
-        if ((moveHorizontal > 0) && !facingRight)
+        if ((moveHorizontal > 0.0f) && !facingRight)
         {
             facingRight = true;
             sr.flipX = false;
         }
-        else if ((moveHorizontal < 0) && facingRight)
+        else if ((moveHorizontal < 0.0f) && facingRight)
         {
             facingRight = false;
             sr.flipX = true;
@@ -70,9 +65,8 @@ public class PlayerMovement : MonoBehaviour
             isJumping = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if ((moveHorizontal > 0.5) || (moveHorizontal < -0.5))
         {
-            Debug.Log("Running");
             isRunning = true;
         }
         #endregion
@@ -81,7 +75,6 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground")) { onGroundState = true; }
-        if (collision.gameObject.CompareTag("Enemy")) { GameOver(); }
     }
 
     // FixedUpdate is called 50 times per second
@@ -90,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Mathf.Abs(moveHorizontal) > 0)
         {
-            Vector2 movement = new Vector2(moveHorizontal, 0);
+            Vector2 movement = new Vector2(Mathf.Sign(moveHorizontal) * 1, 0);
             float currMaxSpeed = (isRunning) ? maxRunSpeed : maxWalkSpeed;
             float currSpeed = (isRunning) ? runSpeed : walkSpeed;
 
@@ -100,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
                 rb.AddForce(movement * currSpeed);
             }
 
-            Debug.Log(rb.linearVelocityX);
+            // Debug.Log(rb.linearVelocityX);
         }
 
         if (Input.GetKeyUp("a") || Input.GetKeyUp("d"))
@@ -120,33 +113,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void GameOver()
-    {
-        Time.timeScale = 0.0f;
-        otherUI.SetActive(false);
-        gameOverScreen.SetActive(true);
-    }
-
-    public void RestartButtonCallback(int input)
-    {
-        Debug.Log("Restart");
-        ResetGame();
-        Time.timeScale = 1.0f;
-    }
-
-    public void ResetGame()
+    public void ResetPlayer()
     {
         rb.transform.position = originalPos;
         facingRight = true;
         sr.flipX = false;
-        scoreText.text = "Score: 0";
-        otherUI.SetActive(true);
-        gameOverScreen.SetActive(false);
-        foreach (Transform eachChild in enemies.transform)
-        {
-            eachChild.transform.localPosition = eachChild.GetComponent<EnemyBehaviour>().startPosition;
-            eachChild.GetComponent<EnemyBehaviour>().hp = 1;
-            eachChild.gameObject.SetActive(true);
-        }
+        sr.color = new Color(255, 255, 255, 255);
     }
 }

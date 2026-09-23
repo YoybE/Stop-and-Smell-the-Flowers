@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
@@ -6,18 +7,27 @@ public class Interactable : MonoBehaviour
 {
     private SpriteRenderer renderer;
     private Color color;
+    [SerializeField] private int colorIndex;
+    [NonSerialized] public Vector3 startPosition;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         renderer = GetComponent<SpriteRenderer>();
         color = renderer.color;
+        startPosition = transform.position;
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        GameObject colObject = collision.gameObject;
+        if (colObject.CompareTag("Player"))
         {
+            SpriteRenderer sr = colObject.GetComponent<SpriteRenderer>();
+            sr.color = color;
+            GameManager.instance.UpdateColorScore(colorIndex);
+
+            #region Fade Interactable
             StartCoroutine(destroyInteractable());
 
             IEnumerator destroyInteractable()
@@ -26,12 +36,18 @@ public class Interactable : MonoBehaviour
                 {
                     color.a = alpha;
                     renderer.color = color;
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForSeconds(0.02f);
                 }
 
-                Destroy(gameObject);
+                gameObject.SetActive(false);
             }
-
+            #endregion
         }
+    }
+
+    public void ResetAlpha()
+    {
+        color.a = 1.0f;
+        renderer.color = color;
     }
 }

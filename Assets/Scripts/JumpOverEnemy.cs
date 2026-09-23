@@ -6,18 +6,14 @@ public class JumpOverEnemy : MonoBehaviour
     /*
     Implements a raycast below the player to detect 
     */
-    public Transform enemyLocation;
-    public TextMeshProUGUI scoreText;
     private bool onGroundState;
-
-    [System.NonSerialized]
-    public int score = 0;
 
     private bool countScoreState = false;
     public Vector3 boxSize;
     public float maxDistance;
     public LayerMask layerMask;
     private RaycastHit2D box;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,43 +34,44 @@ public class JumpOverEnemy : MonoBehaviour
         // Player Jumps
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button0))
         {
-            onGroundState = false;
-            countScoreState = true;
+            // onGroundState = false;
+            // countScoreState = true;
         }
 
-        if (!onGroundState && countScoreState)
+        // if (!onGroundState && countScoreState && onEnemyCheck())
+        if (onEnemyCheck())
         {
-            if (Mathf.Abs(transform.position.x - enemyLocation.position.x) < 0.5f)
-            {
-                countScoreState = false;
-                Debug.Log(score);
-                damageEnemy();
-            }
+            damageEnemy();
+            // GetComponent<Rigidbody2D>().AddForce(Vector2.up * 10, ForceMode2D.Impulse);
+            // countScoreState = false;
         }
+    }
+
+    private void damageEnemy()
+    {
+        // Debug.Log("Collided with:" + box.collider.name);
+        // if (box.collider.name.Equals("Enemy"))
+        // {
+        Debug.Log("on enemy");
+        if (transform.GetComponent<SpriteRenderer>().color == box.collider.gameObject.GetComponent<SpriteRenderer>().color)
+        {
+            Debug.Log("Killing Enemy");
+            // box.collider.gameObject.GetComponent<EnemyBehaviour>().takeDamage(1);
+            box.collider.gameObject.SetActive(false);
+            GameManager.instance.score++;
+        }
+        else
+        {
+            GameManager.instance.GameOver();
+            Debug.Log("Unable to kill enemy character is not of same color");
+        }
+        // }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground")) { onGroundState = true; }
-    }
-
-    private void damageEnemy()
-    {
-        box = Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, maxDistance, layerMask);
-        if (box.collider != null)
-        {
-            if (box.collider.CompareTag("Enemy"))
-            {
-                Debug.Log("on enemy");
-                box.collider.gameObject.GetComponent<EnemyBehaviour>().takeDamage(1);
-                score++;
-                scoreText.text = "Score: " + score.ToString();
-            }
-        }
-        else
-        {
-            Debug.Log("not on enemy");
-        }
+        if (collision.gameObject.CompareTag("Enemy")) { GameManager.instance.GameOver(); }
     }
 
     // Helper to visualize boxSize
@@ -82,5 +79,18 @@ public class JumpOverEnemy : MonoBehaviour
     {
         Gizmos.color = Color.pink;
         Gizmos.DrawCube(transform.position - transform.up * maxDistance, boxSize);
+    }
+
+    private bool onEnemyCheck()
+    {
+        box = Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, maxDistance, layerMask);
+        if (box)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

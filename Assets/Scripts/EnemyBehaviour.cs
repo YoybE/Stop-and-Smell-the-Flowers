@@ -43,7 +43,7 @@ public class EnemyBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (hp == 0) { gameObject.SetActive(false); }
+        // if (hp == 0) { gameObject.SetActive(false); }
     }
 
     // FixedUpdate is called 50 times per second
@@ -53,7 +53,6 @@ public class EnemyBehaviour : MonoBehaviour
         if (Mathf.Abs(rb.position.x - originalX) < maxOffset) { move(); }
         else
         {
-            Debug.Log(enemyColor);
             moveRight *= -1;
             ComputeVelocity();
             move();
