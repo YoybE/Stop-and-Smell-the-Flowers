@@ -28,11 +28,15 @@ public class PlayerController : MonoBehaviour
 
     public GameObject enemies;
 
+    // Animation
+    public Animator playerAnimator;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Application.targetFrameRate = 30; // Sets application to 30 FPS
+
         rb = GetComponent<Rigidbody2D>(); // Gets and stores a reference to player rigidbody for access
         sr = GetComponent<SpriteRenderer>(); // Gets and stores a reference to player sprite renderer for access
 
@@ -47,12 +51,12 @@ public class PlayerController : MonoBehaviour
         // Debug.Log(moveHorizontal);
 
         #region Flip Player Sprite
-        if ((moveHorizontal > 0.0f) && !facingRight)
+        if ((Input.GetKeyDown("d") || (moveHorizontal > 0.0f)) && !facingRight)
         {
             facingRight = true;
             sr.flipX = false;
         }
-        else if ((moveHorizontal < 0.0f) && facingRight)
+        else if ((Input.GetKeyDown("a") || (moveHorizontal < 0.0f)) && facingRight)
         {
             facingRight = false;
             sr.flipX = true;
@@ -70,6 +74,11 @@ public class PlayerController : MonoBehaviour
             isRunning = true;
         }
         #endregion
+
+        playerAnimator.SetBool("onGround", onGroundState);
+        playerAnimator.SetBool("isIdle", Mathf.Abs(rb.linearVelocityX) == 0.0f);
+        playerAnimator.SetFloat("xSpeed", Mathf.Abs(rb.linearVelocityX));
+        Debug.Log(rb.linearVelocityX);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
