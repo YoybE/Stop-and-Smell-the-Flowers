@@ -59,7 +59,8 @@ public class GameManager : MonoBehaviour
         foreach (Transform eachChild in enemies.transform)
         {
             eachChild.transform.localPosition = eachChild.GetComponent<EnemyBehaviour>().startPosition;
-            eachChild.GetComponent<EnemyBehaviour>().hp = 1;
+            eachChild.GetComponent<EnemyBehaviour>().hp = eachChild.GetComponent<EnemyBehaviour>().initialHp;
+            eachChild.gameObject.GetComponent<SpriteRenderer>().color = eachChild.GetComponent<EnemyBehaviour>().enemyColor;
             eachChild.gameObject.SetActive(true);
         }
 

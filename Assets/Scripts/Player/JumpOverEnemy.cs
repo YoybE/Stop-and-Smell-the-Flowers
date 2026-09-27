@@ -14,6 +14,8 @@ public class JumpOverEnemy : MonoBehaviour
     public LayerMask layerMask;
     private RaycastHit2D box;
 
+    [SerializeField] private Rigidbody2D rb;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -71,7 +73,6 @@ public class JumpOverEnemy : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground")) { onGroundState = true; }
-        if (collision.gameObject.CompareTag("Enemy")) { GameManager.instance.GameOver(); }
     }
 
     // Helper to visualize boxSize

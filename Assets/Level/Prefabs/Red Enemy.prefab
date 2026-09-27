@@ -183,7 +183,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ad071aa20d4ee43a2a8cb9a9f8e904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
+  enemyCollider: {fileID: 7222835868025820632}
   patrolSpeed: 2
   maxOffset: 1
   patrolTime: 2
-  hp: 1
+  enemyColor: {r: 0, g: 0, b: 0, a: 0}
+  initialHp: 2
+  hp: 2
+  hitSFX: {fileID: 8300000, guid: 610209f207ae4cf4990aa66ff5a2de94, type: 3}
