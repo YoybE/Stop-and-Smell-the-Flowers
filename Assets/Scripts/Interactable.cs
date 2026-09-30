@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class Interactable : MonoBehaviour
