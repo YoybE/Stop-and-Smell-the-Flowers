@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public GameObject player;
     public GameObject enemies;
     public GameObject interactables;
+    public GameObject breakables;
     public GameObject camera;
 
     private void Awake()
@@ -70,6 +71,12 @@ public class GameManager : MonoBehaviour
             eachChild.GetComponent<Interactable>().ResetAlpha();
             eachChild.gameObject.SetActive(true);
         }
+
+        foreach (Transform eachChild in breakables.transform)
+        {
+            eachChild.gameObject.SetActive(true);
+        }
+
         camera.transform.position = new Vector3(4.19f, 3.01f, -10);
         Time.timeScale = 1.0f;
     }

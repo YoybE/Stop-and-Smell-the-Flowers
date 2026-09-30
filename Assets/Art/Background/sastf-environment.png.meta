@@ -60,7 +60,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -175,7 +175,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sastf-platform-0
+      name: sastf-platform-left
       rect:
         serializedVersion: 2
         x: 0
@@ -197,29 +197,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sastf-platform-1
-      rect:
-        serializedVersion: 2
-        x: 16
-        y: 0
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8988d602854cbe845801d3944e2783b8
-      internalID: 766833605
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: sastf-platform-2
+      name: sastf-platform-right
       rect:
         serializedVersion: 2
         x: 48
@@ -241,7 +219,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sastf-platform-3
+      name: sastf-platform-2a
       rect:
         serializedVersion: 2
         x: 16
@@ -249,7 +227,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -258,6 +236,72 @@ TextureImporter:
       bones: []
       spriteID: 2c62d354827775d459f2cfaa167cb6e9
       internalID: 973306802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sastf-platform-1a
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 12356b11bff5a6140a97bcba7df97aae
+      internalID: 877304753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sastf-platform-1b
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe37c25c924191446b18cef655e2885a
+      internalID: 1240720241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sastf-platform-2b
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a893c62c9e1f1b84289d387f54fe41e1
+      internalID: -1296689716
       vertices: []
       indices: 
       edges: []
@@ -281,10 +325,13 @@ TextureImporter:
       sastf-bee: -5272747321408160793
       sastf-flower: -9205709014634758074
       sastf-mushroom: -8218165704119656931
-      sastf-platform-0: -1717357919519828821
       sastf-platform-1: 766833605
-      sastf-platform-2: 356393966
-      sastf-platform-3: 973306802
+      sastf-platform-1a: 877304753
+      sastf-platform-1b: 1240720241
+      sastf-platform-2a: 973306802
+      sastf-platform-2b: -1296689716
+      sastf-platform-left: -1717357919519828821
+      sastf-platform-right: 356393966
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -31,6 +31,14 @@ public class PlayerController : MonoBehaviour
     // Animation
     public Animator playerAnimator;
 
+    // Raycasting
+    public float circleRadius;
+    public float maxDistance;
+    public LayerMask layerMask;
+
+    // SFX
+    public AudioClip hitSFX;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -74,17 +82,12 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.LeftShift)) { isRunning = true; }
             #endregion
 
-            // if (Mathf.Abs(rb.linearVelocityX) > 0)
-            // {
-            //     AudioManager.instance.PlaySFX(walking);
-            // }
-            // else
-            // {
-            //     audioSource.Pause();
-            // }
+            if (Input.GetKeyDown(KeyCode.F)) { triggerBlast(); }
+
+            if (Input.GetKeyUp("a") || Input.GetKeyUp("d")) { rb.linearVelocityX = 0; }
 
             playerAnimator.SetBool("onGround", onGroundState);
-            playerAnimator.SetBool("isIdle", Mathf.Abs(rb.linearVelocityX) == 0.0f);
+            playerAnimator.SetBool("isIdle", Mathf.Abs(rb.linearVelocityX) < 0.0001f);
             playerAnimator.SetFloat("xSpeed", Mathf.Abs(rb.linearVelocityX));
             playerAnimator.SetBool("isRunning", isRunning);
             // Debug.Log($"xVelocity: {rb.linearVelocityX}\nisRunning: {isRunning}");
@@ -127,11 +130,6 @@ public class PlayerController : MonoBehaviour
             // Debug.Log(rb.linearVelocityX);
         }
 
-        if (Input.GetKeyUp("a") || Input.GetKeyUp("d"))
-        {
-            rb.linearVelocityX = 0.1f;
-        }
-
         if (Input.GetKeyUp(KeyCode.LeftShift)) { isRunning = false; }
 
         if (isJumping && onGroundState)
@@ -152,5 +150,25 @@ public class PlayerController : MonoBehaviour
         sr.color = new Color(255, 255, 255, 255);
         isRunning = false;
         rb.linearVelocityX = 0;
+    }
+
+    void triggerBlast()
+    {
+        RaycastHit2D circleHit = Physics2D.CircleCast(transform.position, circleRadius, -transform.up, maxDistance, layerMask);
+        if (circleHit)
+        {
+            Debug.Log($"{circleHit.collider.name} has been hit");
+            float originalX = circleHit.collider.gameObject.transform.position.x;
+
+            circleHit.collider.transform.parent.gameObject.SetActive(false);
+            AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f);
+        }
+    }
+
+    // Helper to visualize raycast
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(transform.position - transform.up * maxDistance, circleRadius);
     }
 }
