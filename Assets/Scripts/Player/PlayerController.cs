@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using System.Collections;
+using Unity.VisualScripting.ReorderableList;
 
 public class PlayerController : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
     private float currSpeed;
 
     private float moveHorizontal;
+    private bool isMoving = false;
     private bool isJumping;
     private bool isRunning;
     private bool onGroundState;
@@ -57,35 +59,6 @@ public class PlayerController : MonoBehaviour
     {
         if (Time.timeScale != 0.0f)
         {
-            moveHorizontal = Input.GetAxisRaw("Horizontal"); // Returns a value x, R[-1,1], based on input A/Left = -1, D/Right = 1 
-            // Debug.Log(moveHorizontal);
-
-            #region Flip Player Sprite
-            if ((Input.GetKeyDown("d") || (moveHorizontal > 0.0f)) && !facingRight)
-            {
-                facingRight = true;
-                sr.flipX = false;
-            }
-            else if ((Input.GetKeyDown("a") || (moveHorizontal < 0.0f)) && facingRight)
-            {
-                facingRight = false;
-                sr.flipX = true;
-            }
-            #endregion
-
-            #region Handle Movement Inputs
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button0))
-            {
-                isJumping = true;
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftShift)) { isRunning = true; }
-            #endregion
-
-            if (Input.GetKeyDown(KeyCode.F)) { triggerBlast(); }
-
-            if (Input.GetKeyUp("a") || Input.GetKeyUp("d")) { rb.linearVelocityX = 0; }
-
             playerAnimator.SetBool("onGround", onGroundState);
             playerAnimator.SetBool("isIdle", Mathf.Abs(rb.linearVelocityX) < 0.0001f);
             playerAnimator.SetFloat("xSpeed", Mathf.Abs(rb.linearVelocityX));
@@ -99,14 +72,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground")) { onGroundState = true; }
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            // if (!isRunning)
-            // {
-            //     GameManager.instance.GameOver();
-            // }
-            // else
-            // {
             collision.gameObject.GetComponent<EnemyBehaviour>().TakeDamage(rb, sr.color, 1);
-            // }
         }
     }
 
@@ -114,31 +80,9 @@ public class PlayerController : MonoBehaviour
     // Recommended loop for applied forces & physics (Runs on Unity Physics timestep)
     void FixedUpdate()
     {
-        if (Mathf.Abs(moveHorizontal) > 0)
+        if (isMoving)
         {
-            Vector2 movement = new Vector2(Mathf.Sign(moveHorizontal) * 1, 0);
-            currMaxSpeed = (isRunning) ? maxRunSpeed : maxWalkSpeed;
-            currSpeed = (isRunning) ? runSpeed : walkSpeed;
-
-            // Ensures that there is no additional forces past the maximum speed limit
-            if (Mathf.Abs(rb.linearVelocityX) < currMaxSpeed)
-            {
-                float limiter = (currMaxSpeed - Mathf.Abs(rb.linearVelocityX)) / currMaxSpeed;
-                rb.AddForce(movement * currSpeed * limiter);
-            }
-
-            // Debug.Log(rb.linearVelocityX);
-        }
-
-        if (Input.GetKeyUp(KeyCode.LeftShift)) { isRunning = false; }
-
-        if (isJumping && onGroundState)
-        {
-            rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); // ForceMode.Impulse (mass dependent, time independent) 
-            rb.linearVelocityX = moveHorizontal * 0.2f;
-
-            isJumping = false;
-            onGroundState = false;
+            Move(facingRight == true ? 1 : -1);
         }
     }
 
@@ -149,9 +93,85 @@ public class PlayerController : MonoBehaviour
         sr.flipX = false;
         sr.color = new Color(255, 255, 255, 255);
         isRunning = false;
+        isMoving = false;
         rb.linearVelocityX = 0;
     }
 
+    #region Player Actions
+    void FlipSprite(int value)
+    {
+        if (Time.timeScale != 0.0f)
+        {
+            // If the player has pressed left button, flip the sprite to the left; vice versa
+            if (value == -1 && facingRight)
+            {
+                facingRight = false;
+                sr.flipX = true;
+            }
+            else if (value == 1 && !facingRight)
+            {
+                facingRight = true;
+                sr.flipX = false;
+            }
+        }
+    }
+
+    void Move(int moveHorizontal)
+    {
+        // Debug.Log("Player is moving...");
+        Vector2 movement = new Vector2(Mathf.Sign(moveHorizontal) * 1, 0);
+        currMaxSpeed = (isRunning) ? maxRunSpeed : maxWalkSpeed;
+        currSpeed = (isRunning) ? runSpeed : walkSpeed;
+
+        // Ensures that there is no additional forces past the maximum speed limit
+        if (Mathf.Abs(rb.linearVelocityX) < currMaxSpeed)
+        {
+            float limiter = (currMaxSpeed - Mathf.Abs(rb.linearVelocityX)) / currMaxSpeed;
+            rb.AddForce(movement * currSpeed * limiter);
+        }
+
+        // Debug.Log(rb.linearVelocityX);
+    }
+
+    public void MoveCheck(int value)
+    {
+        if (Time.timeScale != 0.0f)
+        {
+            if (value == 0) { isMoving = false; }
+            else
+            {
+                Debug.Log($"Move Value: {value}");
+                FlipSprite(value);
+                isMoving = true;
+                Move(value);
+            }
+        }
+    }
+
+    public void Sprint(int value)
+    {
+        // Debug.Log("Sprint called");
+        if (value == 0) { isRunning = false; }
+        else if (value == 1) { isRunning = true; }
+    }
+
+    public void Jump()
+    {
+        // Debug.Log("Jump called");
+        if (Time.timeScale != 0.0f)
+        {
+            isJumping = true;
+            if (isJumping && onGroundState)
+            {
+                rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); // ForceMode.Impulse (mass dependent, time independent) 
+                rb.linearVelocityX = moveHorizontal * 0.2f;
+
+                isJumping = false;
+                onGroundState = false;
+            }
+        }
+    }
+    #endregion
     void triggerBlast()
     {
         RaycastHit2D circleHit = Physics2D.CircleCast(transform.position, circleRadius, -transform.up, maxDistance, layerMask);

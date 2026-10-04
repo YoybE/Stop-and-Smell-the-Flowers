@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviour
             eachChild.transform.localPosition = eachChild.GetComponent<EnemyBehaviour>().startPosition;
             eachChild.GetComponent<EnemyBehaviour>().hp = eachChild.GetComponent<EnemyBehaviour>().initialHp;
             eachChild.gameObject.GetComponent<SpriteRenderer>().color = eachChild.GetComponent<EnemyBehaviour>().enemyColor;
+            eachChild.gameObject.GetComponent<Collider2D>().enabled = true;
             eachChild.gameObject.SetActive(true);
         }
 

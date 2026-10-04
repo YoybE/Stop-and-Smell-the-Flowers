@@ -75,7 +75,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (compareColor(enemyColor, color))
         {
-            Vector2 recoil = -5 * playerRb.linearVelocity;
+            Vector2 recoil = -2.5f * playerRb.linearVelocity;
 
             Debug.Log("Killing Enemy");
             hp -= damage;
@@ -106,6 +106,8 @@ public class EnemyBehaviour : MonoBehaviour
 
         IEnumerator playAnimation()
         {
+            col.enabled = false;
+
             for (int i = 0; i < 4; i++)
             {
                 if (i % 2 == 0)
