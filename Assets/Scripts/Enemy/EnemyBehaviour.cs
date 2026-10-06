@@ -3,6 +3,7 @@ using TMPro;
 using Unity.VisualScripting;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class EnemyBehaviour : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class EnemyBehaviour : MonoBehaviour
     public float patrolTime = 2.0f;
     private int moveRight = -1;
     private Vector2 velocity;
+    public float recoilMultiplier;
 
     // Enemy Attributes
     public Color enemyColor;
@@ -25,6 +27,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     // Audio SFX
     public AudioClip hitSFX;
+    public AudioMixerGroup audioMixerGroup;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -75,11 +78,23 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (compareColor(enemyColor, color))
         {
-            Vector2 recoil = -2.5f * playerRb.linearVelocity;
+            // Vector2 recoil = -recoilMultiplier * playerRb.linearVelocity;
+            // Vector2 recoil = -recoilMultiplier * new Vector2(playerRb.linearVelocity.x, playerRb.linearVelocity.y)
+            // Relatively okay was {-10.02, 13.14} for yellow enemy (jumping + right); For not jumping on enemies {-8.28, 0}
+            bool isMovingXY = (MathF.Abs(playerRb.linearVelocity.x) > 0.14) & (MathF.Abs(playerRb.linearVelocity.y) > 0.14);
+            bool isMovingX = MathF.Abs(playerRb.linearVelocity.x) > 0.14;
+            bool isMovingY = MathF.Abs(playerRb.linearVelocity.y) > 0.14;
+            float recoilX = isMovingXY ? 10.02f : 
+                            isMovingX ? 8.28f : 5.28f;
+            float recoilY = isMovingXY ? 13.14f :
+                            isMovingY ? recoilMultiplier : 0f;
+            Vector2 recoilDirection = isMovingX ? -1 * new Vector2(MathF.Sign(playerRb.linearVelocity.x), MathF.Sign(playerRb.linearVelocity.y)) : new Vector2(MathF.Sign(velocity.x), 0); 
+            Debug.Log($"{isMovingX}, Recoil Direction: {recoilDirection}");
+            Vector2 recoil = recoilDirection * new Vector2(recoilX, recoilY);
 
-            Debug.Log("Killing Enemy");
+            Debug.Log($"Killing Enemy, Player Velocity is {playerRb.linearVelocity}, Recoil is {recoil}");
             hp -= damage;
-            AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f);
+            AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f, audioMixerGroup);
             Invulnerability(GetComponent<SpriteRenderer>(), enemyCollider);
             playerRb.AddForce(recoil, ForceMode2D.Impulse);
         }

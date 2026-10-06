@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class PlayerFootsteps : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerFootsteps : MonoBehaviour
     public AudioClip footsteps_var1;
     public AudioClip footsteps_var2;
     public AudioClip footsteps_var3;
+    public AudioMixerGroup audioMixerGroup;
     private float audioDelay;
 
     private AudioClip[] footsteps = new AudioClip[4];
@@ -49,7 +51,7 @@ public class PlayerFootsteps : MonoBehaviour
                 AudioClip currentAudioClip = footsteps[UnityEngine.Random.Range(0, 4)];
                 float randVolume = UnityEngine.Random.Range(0.3f, 0.4f);
                 float randPitch = UnityEngine.Random.Range(0.9f, 1.1f);
-                AudioManager.instance.PlaySFX(currentAudioClip, randVolume, randPitch);
+                AudioManager.instance.PlaySFX(currentAudioClip, randVolume, randPitch, audioMixerGroup);
             }
             yield return new WaitForSeconds(audioDelay);
         }

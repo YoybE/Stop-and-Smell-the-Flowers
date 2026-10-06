@@ -196,3 +196,4 @@ MonoBehaviour:
   initialHp: 2
   hp: 1
   hitSFX: {fileID: 8300000, guid: 610209f207ae4cf4990aa66ff5a2de94, type: 3}
+  audioMixerGroup: {fileID: -5401130499279202345, guid: 2e548fe36b8c3634e8036253ddadd4d0, type: 2}

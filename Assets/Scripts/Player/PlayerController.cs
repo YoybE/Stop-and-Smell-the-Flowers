@@ -2,11 +2,13 @@ using System;
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using System.Collections;
 using Unity.VisualScripting.ReorderableList;
+using System.Security.Cryptography;
 
 public class PlayerController : MonoBehaviour
 {
@@ -40,6 +42,7 @@ public class PlayerController : MonoBehaviour
 
     // SFX
     public AudioClip hitSFX;
+    public AudioMixerGroup audioMixerGroup;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -73,6 +76,15 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             collision.gameObject.GetComponent<EnemyBehaviour>().TakeDamage(rb, sr.color, 1);
+        }
+        if (collision.gameObject.CompareTag("Breakable"))
+        {
+            if (SASTFUtils.Utils.compareColor(sr.color, collision.gameObject.GetComponent<SpriteRenderer>().color))
+            {
+                collision.transform.parent.gameObject.SetActive(false);
+                AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f, audioMixerGroup);
+                GameManager.instance.score++;
+            }
         }
     }
 
@@ -172,23 +184,23 @@ public class PlayerController : MonoBehaviour
         }
     }
     #endregion
-    void triggerBlast()
-    {
-        RaycastHit2D circleHit = Physics2D.CircleCast(transform.position, circleRadius, -transform.up, maxDistance, layerMask);
-        if (circleHit)
-        {
-            Debug.Log($"{circleHit.collider.name} has been hit");
-            float originalX = circleHit.collider.gameObject.transform.position.x;
+    // void triggerBlast()
+    // {
+    //     RaycastHit2D circleHit = Physics2D.CircleCast(transform.position, circleRadius, -transform.up, maxDistance, layerMask);
+    //     if (circleHit)
+    //     {
+    //         Debug.Log($"{circleHit.collider.name} has been hit");
+    //         float originalX = circleHit.collider.gameObject.transform.position.x;
 
-            circleHit.collider.transform.parent.gameObject.SetActive(false);
-            AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f);
-        }
-    }
+    //         circleHit.collider.transform.parent.gameObject.SetActive(false);
+    //         AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f);
+    //     }
+    // }
 
-    // Helper to visualize raycast
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(transform.position - transform.up * maxDistance, circleRadius);
-    }
+    // // Helper to visualize raycast
+    // void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.yellow;
+    //     Gizmos.DrawSphere(transform.position - transform.up * maxDistance, circleRadius);
+    // }
 }

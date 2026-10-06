@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
@@ -30,17 +31,18 @@ public class AudioManager : MonoBehaviour
 
     }
 
-    public void PlaySFX(AudioClip audioClip, float volume, float pitch)
+    public void PlaySFX(AudioClip audioClip, float volume, float pitch, AudioMixerGroup audioMixerGroup)
     {
-        StartCoroutine(PlaySFXCoroutine(audioClip, volume, pitch));
+        StartCoroutine(PlaySFXCoroutine(audioClip, volume, pitch, audioMixerGroup));
     }
 
-    IEnumerator PlaySFXCoroutine(AudioClip audioClip, float volume, float pitch)
+    IEnumerator PlaySFXCoroutine(AudioClip audioClip, float volume, float pitch, AudioMixerGroup audioMixerGroup)
     {
         AudioSource audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.clip = audioClip;
         audioSource.volume = volume;
         audioSource.pitch = pitch;
+        audioSource.outputAudioMixerGroup = audioMixerGroup;
         audioSource.Play();
         yield return new WaitForSeconds(audioSource.clip.length);
 
