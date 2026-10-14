@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class PlayerFootsteps : MonoBehaviour
+public class PlayerFootsteps : Singleton<PlayerFootsteps>
 {
     public AudioClip footsteps_var0;
     public AudioClip footsteps_var1;

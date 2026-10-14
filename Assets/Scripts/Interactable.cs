@@ -14,7 +14,7 @@ public class Interactable : MonoBehaviour
     {
         renderer = GetComponent<SpriteRenderer>();
         color = renderer.color;
-        startPosition = transform.position;
+        startPosition = GetComponent<Transform>().position;
     }
 
     void OnTriggerEnter2D(Collider2D collision)

@@ -5,33 +5,14 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 // Class for handling UI Elements
-public class UIManager : MonoBehaviour
+public class UIManager : Singleton<UIManager>
 {
-    public static UIManager instance { get; private set; }
+    public IntVariable gameScore;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI colorScoreText;
     public GameObject gameOverScreen;
     // public GameObject otherUI;
     // private List<String> colorScoreStrings;
-
-    private void Awake()
-    {
-        // Ensures that there is only one instance of this Singleton Class
-        if (instance != null && instance != this)
-        {
-            Destroy(this);
-        }
-        else
-        {
-            instance = this;
-        }
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
 
     // Update is called once per frame
     void Update()
@@ -42,7 +23,7 @@ public class UIManager : MonoBehaviour
     #region Methods for Score UI Updates
     void UpdateScoreUI()
     {
-        scoreText.text = "Score: " + GameManager.instance.score.ToString();
+        scoreText.text = "Score: " + gameScore.previousHighestValue.ToString();
     }
 
     public void UpdateColorScoreUI(int colorIndex)

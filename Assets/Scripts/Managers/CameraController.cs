@@ -1,6 +1,7 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : Singleton<CameraController>
 {
     public Transform player;
     public Transform endLimit;
@@ -12,6 +13,10 @@ public class CameraController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Ensures that player is reassigned properly
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        transform.position = new Vector3(4.19f, 3.01f, -10);
+
         Vector3 bottomLeft = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0));
         viewportHalfWidth = Mathf.Abs(bottomLeft.x - this.transform.position.x);
         offset = this.transform.position.x - player.position.x;

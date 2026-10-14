@@ -8,20 +8,23 @@ using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using System.Collections;
 using System.Security.Cryptography;
+using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Singleton<PlayerController>
 {
+    public GameConstants gameConstants;
+
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private bool facingRight;
     private Vector3 originalPos;
 
     // Player Movement variables
-    public float walkSpeed = 13.0f;
-    public float maxWalkSpeed = 13.5f;
-    public float runSpeed = 16.0f;
-    public float maxRunSpeed = 16.5f;
-    public float jumpSpeed = 11.0f;
+    public float walkSpeed;
+    public float maxWalkSpeed;
+    public float runSpeed;
+    public float maxRunSpeed;
+    public float jumpSpeed;
     private float currMaxSpeed;
     private float currSpeed;
 
@@ -46,6 +49,14 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        walkSpeed = gameConstants.walkSpeed;
+        maxWalkSpeed = gameConstants.maxRunSpeed;
+        runSpeed = gameConstants.runSpeed;
+        maxRunSpeed = gameConstants.maxRunSpeed;
+        jumpSpeed = gameConstants.jumpSpeed;
+
+        SceneManager.activeSceneChanged += SetStartingPosition;
+
         Application.targetFrameRate = 30; // Sets application to 30 FPS
 
         rb = GetComponent<Rigidbody2D>(); // Gets and stores a reference to player rigidbody for access
@@ -82,7 +93,7 @@ public class PlayerController : MonoBehaviour
             {
                 collision.transform.parent.gameObject.SetActive(false);
                 AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f, audioMixerGroup);
-                GameManager.instance.score++;
+                GameManager.instance.gameScore.ApplyChange(1);
             }
         }
     }
@@ -183,23 +194,13 @@ public class PlayerController : MonoBehaviour
         }
     }
     #endregion
-    // void triggerBlast()
-    // {
-    //     RaycastHit2D circleHit = Physics2D.CircleCast(transform.position, circleRadius, -transform.up, maxDistance, layerMask);
-    //     if (circleHit)
-    //     {
-    //         Debug.Log($"{circleHit.collider.name} has been hit");
-    //         float originalX = circleHit.collider.gameObject.transform.position.x;
 
-    //         circleHit.collider.transform.parent.gameObject.SetActive(false);
-    //         AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f);
-    //     }
-    // }
-
-    // // Helper to visualize raycast
-    // void OnDrawGizmos()
-    // {
-    //     Gizmos.color = Color.yellow;
-    //     Gizmos.DrawSphere(transform.position - transform.up * maxDistance, circleRadius);
-    // }
+    public void SetStartingPosition(Scene current, Scene next)
+    {
+        // if (next.name == "Cavern")
+        // {
+        //     this.transform.position = new Vector3(-0.09f, 0.539f, 0.0f);
+        // }
+        this.transform.position = new Vector3(-0.09f, 0.539f, 0.0f);
+    }
 }

@@ -184,9 +184,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
   enemyCollider: {fileID: 5600478080399041990}
+  gameConstants: {fileID: 11400000, guid: ba13307c1b88eca408949d7b9bb5bbce, type: 2}
   patrolSpeed: 2
   maxOffset: 1
   patrolTime: 2
+  recoilMultiplier: 0
   enemyColor: {r: 0, g: 0, b: 0, a: 0}
   initialHp: 2
   hp: 1

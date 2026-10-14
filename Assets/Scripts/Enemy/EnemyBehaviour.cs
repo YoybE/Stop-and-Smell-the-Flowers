@@ -10,12 +10,13 @@ public class EnemyBehaviour : MonoBehaviour
     private Rigidbody2D rb;
     [NonSerialized] public Vector3 startPosition;
     public Collider2D enemyCollider;
+    public GameConstants gameConstants;
 
     // Movement/Patrol Variables
-    public float patrolSpeed = 2;
+    public float patrolSpeed;
     private float originalX;
-    public float maxOffset = 1.0f;
-    public float patrolTime = 2.0f;
+    public float maxOffset;
+    public float patrolTime;
     private int moveRight = -1;
     private Vector2 velocity;
     public float recoilMultiplier;
@@ -28,6 +29,14 @@ public class EnemyBehaviour : MonoBehaviour
     // Audio SFX
     public AudioClip hitSFX;
     public AudioMixerGroup audioMixerGroup;
+
+    void Awake()
+    {
+        patrolSpeed = gameConstants.enemyPatrolSpeed;
+        maxOffset = gameConstants.enemyMaxOffset;
+        patrolTime = gameConstants.enemyPatrolTime;
+        initialHp = gameConstants.enemyInitialHp;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -56,7 +65,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (hp == 0)
         {
-            GameManager.instance.score++;
+            GameManager.instance.gameScore.ApplyChange(1);
             gameObject.SetActive(false);
         }
     }
@@ -84,11 +93,11 @@ public class EnemyBehaviour : MonoBehaviour
             bool isMovingXY = (MathF.Abs(playerRb.linearVelocity.x) > 0.14) & (MathF.Abs(playerRb.linearVelocity.y) > 0.14);
             bool isMovingX = MathF.Abs(playerRb.linearVelocity.x) > 0.14;
             bool isMovingY = MathF.Abs(playerRb.linearVelocity.y) > 0.14;
-            float recoilX = isMovingXY ? 10.02f : 
+            float recoilX = isMovingXY ? 10.02f :
                             isMovingX ? 8.28f : 5.28f;
             float recoilY = isMovingXY ? 13.14f :
                             isMovingY ? recoilMultiplier : 0f;
-            Vector2 recoilDirection = isMovingX ? -1 * new Vector2(MathF.Sign(playerRb.linearVelocity.x), MathF.Sign(playerRb.linearVelocity.y)) : new Vector2(MathF.Sign(velocity.x), 0); 
+            Vector2 recoilDirection = isMovingX ? -1 * new Vector2(MathF.Sign(playerRb.linearVelocity.x), MathF.Sign(playerRb.linearVelocity.y)) : new Vector2(MathF.Sign(velocity.x), 0);
             Debug.Log($"{isMovingX}, Recoil Direction: {recoilDirection}");
             Vector2 recoil = recoilDirection * new Vector2(recoilX, recoilY);
 

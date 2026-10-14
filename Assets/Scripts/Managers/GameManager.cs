@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // GameManager handles global player data (such as score)
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
-    public static GameManager instance { get; private set; }
-    public int score; // Stores the player score
+    public GameConstants gameConstants;
+    public IntVariable gameScore; // Stores the player score
     public List<int> colorScore; // List of binary integers that indicate whether a color has been found, based off the colors of the Rainbow
     public GameObject player;
     public GameObject enemies;
@@ -15,25 +16,13 @@ public class GameManager : MonoBehaviour
     public GameObject breakables;
     public GameObject camera;
 
-    private void Awake()
-    {
-        // Ensures that there is only one instance of this Singleton Class
-        if (instance != null && instance != this)
-        {
-            Destroy(this);
-        }
-        else
-        {
-            instance = this;
-        }
-    }
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Initializes the scores
-        score = 0;
+        gameScore.SetValue(0);
         colorScore = new List<int> { 0, 0, 0, 0, 0, 0, 0 };
+        AudioManager.instance.PlaySFX(gameConstants.backgroundMusic, 1.0f, 1.0f, gameConstants.MusicMixerGroup, true);
     }
 
     public void UpdateColorScore(int index)
@@ -44,17 +33,31 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        StopAllAudio();
+
         Time.timeScale = 0.0f;
         UIManager.instance.GameOver(true);
     }
 
     public void ResetGame()
     {
+        if (SceneManager.GetActiveScene().name != "Forest")
+        {
+            SceneManager.LoadScene("Forest");
+            Time.timeScale = 1.0f;
+            AudioManager.instance.PlaySFX(gameConstants.backgroundMusic, 1.0f, 1.0f, gameConstants.MusicMixerGroup, true);
+        }
+
         player.GetComponent<PlayerController>().ResetPlayer();
         UIManager.instance.GameOver(false);
         UIManager.instance.ResetUI();
-        score = 0;
+        gameScore.ResetHighestValue();
+        gameScore.SetValue(0);
         colorScore = new List<int> { 0, 0, 0, 0, 0, 0, 0 };
+
+        enemies = GameObject.FindGameObjectWithTag("Enemies");
+        interactables = GameObject.FindGameObjectWithTag("Interactable");
+        breakables = GameObject.FindGameObjectWithTag("Breakable");
 
         foreach (Transform eachChild in enemies.transform)
         {
@@ -67,7 +70,6 @@ public class GameManager : MonoBehaviour
 
         foreach (Transform eachChild in interactables.transform)
         {
-            eachChild.transform.localPosition = eachChild.GetComponent<Interactable>().startPosition;
             eachChild.GetComponent<Interactable>().ResetAlpha();
             eachChild.gameObject.SetActive(true);
         }
@@ -79,5 +81,17 @@ public class GameManager : MonoBehaviour
 
         camera.transform.position = new Vector3(4.19f, 3.01f, -10);
         Time.timeScale = 1.0f;
+
+        StopAllAudio();
+        AudioManager.instance.PlaySFX(gameConstants.backgroundMusic, 1.0f, 1.0f, gameConstants.MusicMixerGroup, true);
+    }
+
+    public void StopAllAudio()
+    {
+        AudioSource[] audioSources = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+        foreach (AudioSource audio in audioSources)
+        {
+            audio.Stop();
+        }
     }
 }

@@ -6,7 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Main.unity
+    path: Assets/Scenes/MainMenu.unity
+    guid: 115f3eb69fa57f7438af808c08f0dd88
+  - enabled: 1
+    path: Assets/Scenes/Forest.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Cavern.unity
+    guid: 92756b98d01e91b46b833f6a2eb3f393
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

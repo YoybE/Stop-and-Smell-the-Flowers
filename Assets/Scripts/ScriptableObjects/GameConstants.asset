@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2f2cfd55b4366b41a0f58b515ae9ec2, type: 3}
+  m_Name: GameConstants
+  m_EditorClassIdentifier: Assembly-CSharp::GameConstants
+  walkSpeed: 13
+  maxWalkSpeed: 13.5
+  runSpeed: 16
+  maxRunSpeed: 16.5
+  jumpSpeed: 11
+  score: 0
+  enemyPatrolSpeed: 2
+  enemyMaxOffset: 1
+  enemyPatrolTime: 2
+  enemyInitialHp: 2
+  backgroundMusic: {fileID: 8300000, guid: ff553d050f9bd414aabb7d3a2750b49e, type: 3}
+  MusicMixerGroup: {fileID: -5049471005212436898, guid: 2e548fe36b8c3634e8036253ddadd4d0, type: 2}
