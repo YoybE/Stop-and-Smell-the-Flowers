@@ -1,4 +1,3 @@
-using System;
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
@@ -10,16 +9,24 @@ using System.Collections;
 using System.Security.Cryptography;
 using UnityEngine.SceneManagement;
 
-public class PlayerController : Singleton<PlayerController>
+
+public class PlayerController : MonoBehaviour
 {
+    [Header("Game Constants")]
     public GameConstants gameConstants;
+    public IntVariable gameScore;
+
+    [Header("Game Events")]
+    [SerializeField] private IntGameEvent _onUpdateScore;
+    [SerializeField] private SimpleGameEvent _onHit;
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private bool facingRight;
     private Vector3 originalPos;
 
-    // Player Movement variables
+    [Header("Movement")]
+    [Tooltip("Player movement variables")]
     public float walkSpeed;
     public float maxWalkSpeed;
     public float runSpeed;
@@ -34,17 +41,17 @@ public class PlayerController : Singleton<PlayerController>
     private bool isRunning;
     private bool onGroundState;
 
-    // Animation
+    [Header("Animator")]
     public Animator playerAnimator;
 
-    // Raycasting
+    [Header("Raycasting")]
     public float circleRadius;
     public float maxDistance;
     public LayerMask layerMask;
 
     // SFX
-    public AudioClip hitSFX;
-    public AudioMixerGroup audioMixerGroup;
+    // public AudioClip hitSFX;
+    // public AudioMixerGroup audioMixerGroup;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -92,8 +99,9 @@ public class PlayerController : Singleton<PlayerController>
             if (SASTFUtils.Utils.compareColor(sr.color, collision.gameObject.GetComponent<SpriteRenderer>().color))
             {
                 collision.transform.parent.gameObject.SetActive(false);
-                AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f, audioMixerGroup);
-                GameManager.instance.gameScore.ApplyChange(1);
+                _onHit.Raise();
+                gameScore.ApplyChange(1);
+                _onUpdateScore.Raise(1);
             }
         }
     }
@@ -108,7 +116,7 @@ public class PlayerController : Singleton<PlayerController>
         }
     }
 
-    public void ResetPlayer()
+    public void onReset()
     {
         rb.transform.position = originalPos;
         facingRight = true;
@@ -117,6 +125,12 @@ public class PlayerController : Singleton<PlayerController>
         isRunning = false;
         isMoving = false;
         rb.linearVelocityX = 0;
+        Time.timeScale = 1.0f;
+    }
+
+    public void onGameOver()
+    {
+
     }
 
     #region Player Actions

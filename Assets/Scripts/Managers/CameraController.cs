@@ -1,10 +1,11 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class CameraController : Singleton<CameraController>
+public class CameraController : MonoBehaviour
 {
     public Transform player;
     public Transform endLimit;
+    private Vector3 startPosition;
     private float offset;
     private float startX;
     private float endX;
@@ -22,6 +23,8 @@ public class CameraController : Singleton<CameraController>
         offset = this.transform.position.x - player.position.x;
         startX = this.transform.position.x;
         endX = endLimit.transform.position.x - viewportHalfWidth;
+
+        startPosition = this.transform.position;
     }
 
     // Update is called once per frame
@@ -32,5 +35,10 @@ public class CameraController : Singleton<CameraController>
         {
             this.transform.position = new Vector3(desiredX, this.transform.position.y, this.transform.position.z);
         }
+    }
+
+    public void GameRestart()
+    {
+        transform.position = startPosition;
     }
 }

@@ -4,6 +4,13 @@ using UnityEngine;
 public class IntVariable : Variable<int>
 {
     public int previousHighestValue;
+
+    public void Initialize()
+    {
+        SetValue(0);
+        ResetHighestValue();
+    }
+
     public override void SetValue(int value)
     {
         // Updates the value if higher than currently stored value

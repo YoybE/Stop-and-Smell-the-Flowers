@@ -5,23 +5,20 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 // Class for handling UI Elements
-public class UIManager : Singleton<UIManager>
+public class UIManager : MonoBehaviour
 {
+    [Header("Game Constants")]
     public IntVariable gameScore;
+    public ListIntVariable colorScore;
+
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI colorScoreText;
     public GameObject gameOverScreen;
     // public GameObject otherUI;
     // private List<String> colorScoreStrings;
 
-    // Update is called once per frame
-    void Update()
-    {
-        UpdateScoreUI();
-    }
-
     #region Methods for Score UI Updates
-    void UpdateScoreUI()
+    public void UpdateScoreUI()
     {
         scoreText.text = "Score: " + gameScore.previousHighestValue.ToString();
     }
@@ -46,12 +43,6 @@ public class UIManager : Singleton<UIManager>
     {
         // otherUI.SetActive(!active);
         gameOverScreen.SetActive(active);
-    }
-
-    public void RestartButtonCallback()
-    {
-        Debug.Log("Restart");
-        GameManager.instance.ResetGame();
     }
 
     public void ResetUI()

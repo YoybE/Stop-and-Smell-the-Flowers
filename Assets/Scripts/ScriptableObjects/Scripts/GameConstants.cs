@@ -18,7 +18,10 @@ public class GameConstants : ScriptableObject
     public float enemyPatrolTime = 2.0f;
     public int enemyInitialHp = 2;
 
-    [Header("Audio")]
+    [Header("Audio: Music")]
     public AudioClip backgroundMusic;
     public AudioMixerGroup MusicMixerGroup;
+
+    [Header("Audio: SFX")]
+    public AudioClip hitSFX;
 }

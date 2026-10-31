@@ -7,6 +7,15 @@ using UnityEngine.Audio;
 
 public class EnemyBehaviour : MonoBehaviour
 {
+    [Header("Game Constants")]
+    public IntVariable gameScore;
+    [SerializeField] private SimpleRuntimeSet enemyRuntimeSet;
+
+    [Header("Game Events")]
+    [SerializeField] private IntGameEvent _onUpdateScore;
+    [SerializeField] private SimpleGameEvent _onHit;
+    [SerializeField] private SimpleGameEvent _onGameOver;
+
     private Rigidbody2D rb;
     [NonSerialized] public Vector3 startPosition;
     public Collider2D enemyCollider;
@@ -27,8 +36,8 @@ public class EnemyBehaviour : MonoBehaviour
     public int hp;
 
     // Audio SFX
-    public AudioClip hitSFX;
-    public AudioMixerGroup audioMixerGroup;
+    // public AudioClip hitSFX;
+    // public AudioMixerGroup audioMixerGroup;
 
     void Awake()
     {
@@ -36,6 +45,17 @@ public class EnemyBehaviour : MonoBehaviour
         maxOffset = gameConstants.enemyMaxOffset;
         patrolTime = gameConstants.enemyPatrolTime;
         initialHp = gameConstants.enemyInitialHp;
+        enemyRuntimeSet.Initialize();
+    }
+
+    void OnEnable()
+    {
+        enemyRuntimeSet.AddToRuntimeSet(this.gameObject);
+    }
+
+    void OnDisable()
+    {
+        enemyRuntimeSet.RemoveFromRuntimeSet(this.gameObject);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -65,7 +85,8 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (hp == 0)
         {
-            GameManager.instance.gameScore.ApplyChange(1);
+            gameScore.ApplyChange(1);
+            _onUpdateScore.Raise(1);
             gameObject.SetActive(false);
         }
     }
@@ -103,13 +124,13 @@ public class EnemyBehaviour : MonoBehaviour
 
             Debug.Log($"Killing Enemy, Player Velocity is {playerRb.linearVelocity}, Recoil is {recoil}");
             hp -= damage;
-            AudioManager.instance.PlaySFX(hitSFX, 0.3f, 1.0f, audioMixerGroup);
+            _onHit.Raise();
             Invulnerability(GetComponent<SpriteRenderer>(), enemyCollider);
             playerRb.AddForce(recoil, ForceMode2D.Impulse);
         }
         else
         {
-            GameManager.instance.GameOver();
+            _onGameOver.Raise();
             Debug.Log($"Unable to kill enemy character is not of same color ({color} != {enemyColor})");
         }
     }

@@ -4,10 +4,33 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
+    [Header("Game Constants")]
+    [SerializeField] private SimpleRuntimeSet interactableRuntimeSet;
+    [SerializeField] private ListIntVariable colorScore;
+
+    [Header("Game Events")]
+    [SerializeField] private IntGameEvent _onUpdateColorScore;
+
+    [Header("Interactable Attributes")]
     private SpriteRenderer renderer;
     private Color color;
     [SerializeField] private int colorIndex;
     [NonSerialized] public Vector3 startPosition;
+
+    void OnAwake()
+    {
+        interactableRuntimeSet.Initialize();
+    }
+
+    void OnEnable()
+    {
+        interactableRuntimeSet.AddToRuntimeSet(this.gameObject);
+    }
+
+    void OnDisable()
+    {
+        interactableRuntimeSet.RemoveFromRuntimeSet(this.gameObject);
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,7 +47,8 @@ public class Interactable : MonoBehaviour
         {
             SpriteRenderer sr = colObject.GetComponent<SpriteRenderer>();
             sr.color = color;
-            GameManager.instance.UpdateColorScore(colorIndex);
+            colorScore.ApplyChange(1, colorIndex);
+            _onUpdateColorScore.Raise(colorIndex);
 
             #region Fade Interactable
             StartCoroutine(destroyInteractable());

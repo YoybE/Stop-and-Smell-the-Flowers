@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace SASTFUtils
 {
-    public static class Utils {
+    public static class Utils
+    {
         public static bool compareColor(Color color1, Color color2)
         {
             bool compareColorComponent(float c1, float c2)

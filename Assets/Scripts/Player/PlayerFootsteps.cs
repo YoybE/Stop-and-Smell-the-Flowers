@@ -4,14 +4,21 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class PlayerFootsteps : Singleton<PlayerFootsteps>
+public class PlayerFootsteps : MonoBehaviour
 {
-    public AudioClip footsteps_var0;
-    public AudioClip footsteps_var1;
-    public AudioClip footsteps_var2;
-    public AudioClip footsteps_var3;
-    public AudioMixerGroup audioMixerGroup;
-    private float audioDelay;
+    // [Header("Footstep Audio Clips")]
+    // public AudioClip footsteps_var0;
+    // public AudioClip footsteps_var1;
+    // public AudioClip footsteps_var2;
+    // public AudioClip footsteps_var3;
+    // public AudioMixerGroup audioMixerGroup;
+    // private float audioDelay;
+
+    [Header("Player Audio Constants")]
+    public PlayerAudioConstants audioConstants;
+
+    [Header("Game Events")]
+    [SerializeField] private SimpleGameEvent onPlayFootsteps;
 
     private AudioClip[] footsteps = new AudioClip[4];
 
@@ -24,10 +31,10 @@ public class PlayerFootsteps : Singleton<PlayerFootsteps>
     {
         playerAnimator = GetComponent<Animator>();
 
-        footsteps[0] = footsteps_var0;
-        footsteps[1] = footsteps_var1;
-        footsteps[2] = footsteps_var2;
-        footsteps[3] = footsteps_var3;
+        audioConstants.footsteps[0] = audioConstants.footsteps_var0;
+        audioConstants.footsteps[1] = audioConstants.footsteps_var1;
+        audioConstants.footsteps[2] = audioConstants.footsteps_var2;
+        audioConstants.footsteps[3] = audioConstants.footsteps_var3;
 
         StartCoroutine(WalkingSFX(footsteps));
     }
@@ -38,8 +45,8 @@ public class PlayerFootsteps : Singleton<PlayerFootsteps>
         isWalking = playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("love-walk");
         isRunning = playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("love-run");
 
-        if (isWalking) { audioDelay = 0.45f; }
-        else if (isRunning) { audioDelay = 0.2f; }
+        if (isWalking) { audioConstants.currentAudioDelay = audioConstants.walkDelay; }
+        else if (isRunning) { audioConstants.currentAudioDelay = audioConstants.runDelay; }
     }
 
     IEnumerator WalkingSFX(AudioClip[] audioClips)
@@ -48,12 +55,13 @@ public class PlayerFootsteps : Singleton<PlayerFootsteps>
         {
             if (isWalking || isRunning)
             {
-                AudioClip currentAudioClip = footsteps[UnityEngine.Random.Range(0, 4)];
-                float randVolume = UnityEngine.Random.Range(0.3f, 0.4f);
-                float randPitch = UnityEngine.Random.Range(0.9f, 1.1f);
-                AudioManager.instance.PlaySFX(currentAudioClip, randVolume, randPitch, audioMixerGroup);
+                audioConstants.currentAudioClip = audioConstants.footsteps[UnityEngine.Random.Range(0, 4)];
+                audioConstants.currentVolume = UnityEngine.Random.Range(0.3f, 0.4f);
+                audioConstants.currentPitch = UnityEngine.Random.Range(0.9f, 1.1f);
+                // AudioManager.instance.PlaySFX(currentAudioClip, randVolume, randPitch, audioMixerGroup);
+                onPlayFootsteps.Raise();
             }
-            yield return new WaitForSeconds(audioDelay);
+            yield return new WaitForSeconds(audioConstants.currentAudioDelay);
         }
     }
 }
