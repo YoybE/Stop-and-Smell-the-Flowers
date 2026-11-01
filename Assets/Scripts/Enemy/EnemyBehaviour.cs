@@ -29,11 +29,13 @@ public class EnemyBehaviour : MonoBehaviour
     private int moveRight = -1;
     private Vector2 velocity;
     public float recoilMultiplier;
+    private bool facingRight;
 
     // Enemy Attributes
     public Color enemyColor;
     public int initialHp = 2;
     public int hp;
+    private SpriteRenderer sr;
 
     // Audio SFX
     // public AudioClip hitSFX;
@@ -45,6 +47,7 @@ public class EnemyBehaviour : MonoBehaviour
         maxOffset = gameConstants.enemyMaxOffset;
         patrolTime = gameConstants.enemyPatrolTime;
         initialHp = gameConstants.enemyInitialHp;
+
         enemyRuntimeSet.Initialize();
     }
 
@@ -64,10 +67,14 @@ public class EnemyBehaviour : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         enemyColor = GetComponent<SpriteRenderer>().color;
         startPosition = GetComponent<Transform>().position;
+        sr = GetComponent<SpriteRenderer>();
 
         originalX = transform.position.x;
         hp = initialHp;
         ComputeVelocity();
+        facingRight = false;
+
+        enemyRuntimeSet.AddToRuntimeSet(this.gameObject);
     }
 
     void ComputeVelocity()
@@ -101,6 +108,12 @@ public class EnemyBehaviour : MonoBehaviour
             moveRight *= -1;
             ComputeVelocity();
             move();
+
+            if ((moveRight < 0 && facingRight) || (moveRight > 0 && !facingRight))
+            {
+                sr.flipX = facingRight ? true : false;
+                facingRight = facingRight ? false : true;
+            }
         }
     }
 
@@ -111,6 +124,8 @@ public class EnemyBehaviour : MonoBehaviour
             // Vector2 recoil = -recoilMultiplier * playerRb.linearVelocity;
             // Vector2 recoil = -recoilMultiplier * new Vector2(playerRb.linearVelocity.x, playerRb.linearVelocity.y)
             // Relatively okay was {-10.02, 13.14} for yellow enemy (jumping + right); For not jumping on enemies {-8.28, 0}
+            GetComponent<EnemyStateController>().SetPowerup(PowerupType.Damage);
+
             bool isMovingXY = (MathF.Abs(playerRb.linearVelocity.x) > 0.14) & (MathF.Abs(playerRb.linearVelocity.y) > 0.14);
             bool isMovingX = MathF.Abs(playerRb.linearVelocity.x) > 0.14;
             bool isMovingY = MathF.Abs(playerRb.linearVelocity.y) > 0.14;

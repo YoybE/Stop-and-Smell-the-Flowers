@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c12fb1ce60c943e44b6841ed1c2f51d6, type: 3}
+  m_Name: DefaultLoneliness
+  m_EditorClassIdentifier: Assembly-CSharp::State
+  setupActions:
+  - {fileID: 11400000, guid: 34327d2aa68b69b4aa684c1d657ec05f, type: 2}
+  - {fileID: 11400000, guid: 67c41ab83362e994ea95e2973dacd392, type: 2}
+  actions:
+  - {fileID: 11400000, guid: 34327d2aa68b69b4aa684c1d657ec05f, type: 2}
+  eventTriggeredActions: []
+  exitActions: []
+  transitions:
+  - decision: {fileID: 11400000, guid: c87b709e06a802a43b57ae09bb82e1f8, type: 2}
+    trueState: {fileID: 11400000, guid: 27b79034128d6824eb4f0db20fc44486, type: 2}
+    falseState: {fileID: 11400000, guid: 82e8e316479544646844810adbab8b53, type: 2}
+  sceneGizmoColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
